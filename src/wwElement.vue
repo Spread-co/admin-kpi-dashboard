@@ -634,5 +634,8 @@ export default {
   .spread-kd { padding: 1rem; }
   .spread-kd__kpi-grid { grid-template-columns: 1fr 1fr; }
 }
+@media (min-width: 1280px) {
+  .spread-kd { padding: 1.5rem 2.5rem; }
+}
 @keyframes spread-perm-spin { to { transform: rotate(360deg); } }
 </style>
