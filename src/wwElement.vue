@@ -448,6 +448,8 @@ export default {
   padding: 1.5rem;
   background: var(--spread-background);
   min-height: 400px;
+  max-width: 1440px;
+  margin-inline: auto;
 }
 
 .spread-kd *,
