@@ -1,5 +1,13 @@
 <template>
   <div v-if="!content.portalTarget || content.portalTarget === 'admin'" class="spread-kd">
+    <div v-if="permissionGranted !== true" class="spread-perm-overlay" style="position:absolute;inset:0;z-index:9999;background:var(--spread-cream,#FBFAF8);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:32px;text-align:center;">
+      <div v-if="permissionGranted === null" style="width:24px;height:24px;border:3px solid rgba(0,0,0,0.1);border-top-color:var(--spread-accent,#CE6632);border-radius:50%;animation:spread-perm-spin 0.7s linear infinite;"></div>
+      <template v-else>
+        <span style="font-size:32px;line-height:1;">🔒</span>
+        <strong style="font-size:15px;font-weight:700;color:var(--spread-black,#141414);margin:0;">Access denied</strong>
+        <span style="font-size:13px;color:var(--spread-mid-grey,#6B7280);">You don't have permission to view this area.</span>
+      </template>
+    </div>
     <!-- ── Gate overlay (missing credentials) ───────────────────────── -->
     <div v-if="!content.accessToken || !content.userId" class="spread-kd__gate">
       <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -253,6 +261,7 @@ export default {
 
   data() {
     return {
+      permissionGranted: null,
       loading:           false,
       kpis:              null,
       funnel:            [],
@@ -294,6 +303,7 @@ export default {
       this._startPolling();
     },
     unreadCount(n) { this.setKpiUnreadAlerts(n); },
+    'content.accessToken': { immediate: true, handler(token) { if (token) this.checkAdminPermission(); else this.permissionGranted = false; } },
   },
 
   mounted() {
@@ -319,6 +329,20 @@ export default {
   },
 
   methods: {
+    async checkAdminPermission() {
+      const t = this.content?.accessToken, u = this.content?.userId,
+            url = this.content?.supabaseUrl, k = this.content?.supabaseAnonKey;
+      if (!t || !u || !url || !k) { this.permissionGranted = false; return; }
+      try {
+        const r = await fetch(`${url}/rest/v1/rpc/has_role`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', apikey: k, Authorization: `Bearer ${t}` },
+          body: JSON.stringify({ p_user_id: u, p_role_key: 'admin' }),
+        });
+        this.permissionGranted = r.ok ? !!(await r.json()) : false;
+      } catch { this.permissionGranted = false; }
+    },
+
     client() {
       return createSpreadClient(this.content?.supabaseUrl, this.content?.supabaseAnonKey, this.content?.accessToken);
     },
@@ -450,6 +474,7 @@ export default {
   min-height: 400px;
   max-width: 1440px;
   margin-inline: auto;
+  position: relative;
 }
 
 .spread-kd *,
@@ -609,4 +634,5 @@ export default {
   .spread-kd { padding: 1rem; }
   .spread-kd__kpi-grid { grid-template-columns: 1fr 1fr; }
 }
+@keyframes spread-perm-spin { to { transform: rotate(360deg); } }
 </style>
