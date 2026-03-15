@@ -641,4 +641,28 @@ export default {
   .spread-kd { padding: 1.5rem 2.5rem; }
 }
 @keyframes spread-perm-spin { to { transform: rotate(360deg); } }
+
+/* ── Dark mode ─────────────────────────────────────────────────────── */
+:global(html.dark) .spread-kd {
+  background: #000000;
+  color: #f5f0eb;
+  --spread-cream: #18181b;
+  --spread-border: rgba(230, 216, 202, 0.12);
+  --spread-border-outer: rgba(230, 216, 202, 0.15);
+  --spread-text-primary: #f5f0eb;
+  --spread-text-secondary: rgba(230, 216, 202, 0.65);
+  --spread-text-muted: rgba(230, 216, 202, 0.4);
+}
+:global(html.dark) .spread-kd__card { background: #18181b; border-color: rgba(230,216,202,0.12); }
+:global(html.dark) .spread-kd__kpi-label { color: rgba(230,216,202,0.5); text-transform: uppercase; letter-spacing: 0.05em; }
+:global(html.dark) .spread-kd__kpi-val { color: #f5f0eb; }
+:global(html.dark) .spread-kd__kpi-sub { color: rgba(230,216,202,0.45); }
+:global(html.dark) .spread-kd__delta--up { color: #4ade80; }
+:global(html.dark) .spread-kd__delta--down { color: #f87171; }
+:global(html.dark) .spread-kd__chart-bg { background: #27272a; }
+:global(html.dark) .spread-kd__chart-fill { background: linear-gradient(to top, rgba(206,102,50,0.5), rgba(206,102,50,0.1)); }
+:global(html.dark) .spread-kd__section-title { color: #f5f0eb; }
+:global(html.dark) .spread-kd__divider { border-color: rgba(230,216,202,0.08); }
+:global(html.dark) .spread-kd select,
+:global(html.dark) .spread-kd input { background: #160c11; border-color: rgba(230,216,202,0.2); color: #f5f0eb; }
 </style>
